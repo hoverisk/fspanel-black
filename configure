@@ -1,0 +1,33 @@
+#!/bin/sh
+
+PROGNAME=fspanel
+
+LDFLAGS="$LDFLAGS -lX11 -L/usr/local/lib/"
+
+echo -n "checking for Linux... "
+if test "`uname`" = "Linux"; then
+	CFLAGS="$CFLAGS -DNOSTDLIB -nostdlib"
+	echo yes
+else
+	echo no
+fi
+
+echo -n "checking freetype2 flags... "
+FSCFLAGS=`freetype-config --cflags`
+echo "${FSCFLAGS}"
+
+echo -n "creating Makefile... "
+
+echo CC="gcc" > Makefile
+echo CFLAGS="${FSCFLAGS} $CFLAGS" >> Makefile
+echo LDFLAGS="$LDFLAGS" >> Makefile
+echo PROGNAME="$PROGNAME" >> Makefile
+echo LIBS="-lXpm -lXft" >> Makefile
+echo >> Makefile
+echo all: $\(PROGNAME\) >> Makefile
+echo >> Makefile
+echo $\(PROGNAME\): Makefile fspanel.c fspanel.h icon.xpm >> Makefile
+echo \	$\(CC\) $\(CFLAGS\) $\(LDFLAGS\) fspanel.c -o $\(PROGNAME\) $\(LIBS\) >> Makefile
+echo >> Makefile
+
+echo done
